@@ -2,14 +2,22 @@
 
 A collection of useful .NET libraries for modern development.
 
+## 🎯 Overview
+
+**OpenLibs** is a monorepo containing high-quality .NET packages designed to accelerate development with clean, maintainable code:
+
+Each package follows modern .NET practices, targets .NET 9.0+, and includes comprehensive documentation with practical examples.
+
 ## 📦 Available Packages
 
 | Package | Version | Description |
 |---------|---------|-------------|
-| [OpenLibs.Extensions](https://www.nuget.org/packages/OpenLibs.Extensions/) | [![NuGet](https://img.shields.io/nuget/v/OpenLibs.Extensions.svg)](https://www.nuget.org/packages/OpenLibs.Extensions/) | Useful extensions for configuration and dependency injection |
-| OpenLibs.SeedWork | Coming soon | Base implementations for Domain-Driven Design |
+| [OpenLibs.Extensions](https://www.nuget.org/packages/OpenLibs.Extensions/) | [![NuGet](https://img.shields.io/nuget/v/OpenLibs.Extensions.svg)](https://www.nuget.org/packages/OpenLibs.Extensions/) | Strongly-typed configuration and dependency injection extensions |
+| [OpenLibs.SeedWork](https://www.nuget.org/packages/OpenLibs.SeedWork/) | [![NuGet](https://img.shields.io/nuget/v/OpenLibs.SeedWork.svg)](https://www.nuget.org/packages/OpenLibs.SeedWork/) | Base implementations for Domain-Driven Design (DDD) |
 
 ## 🚀 Installation
+
+### OpenLibs.Extensions
 
 ```bash
 # Via Package Manager
@@ -22,11 +30,25 @@ dotnet add package OpenLibs.Extensions
 <PackageReference Include="OpenLibs.Extensions" Version="1.0.0" />
 ```
 
+### OpenLibs.SeedWork
+
+```bash
+# Via Package Manager
+Install-Package OpenLibs.SeedWork
+
+# Via .NET CLI
+dotnet add package OpenLibs.SeedWork
+
+# Via PackageReference
+<PackageReference Include="OpenLibs.SeedWork" Version="1.0.0" />
+```
+
 ## 📖 Documentation
 
-Each package has its own documentation:
+Each package has its own comprehensive documentation:
 
-- [OpenLibs.Extensions](./src/OpenLibs.Extensions/README.md)
+- [OpenLibs.Extensions](./src/OpenLibs.Extensions/README.md) - Configuration and dependency injection extensions
+- [OpenLibs.SeedWork](./src/OpenLibs.SeedWork/README.md) - Domain-Driven Design building blocks
 
 ## 🤝 Contributing
 
@@ -44,7 +66,9 @@ This project uses [Conventional Commits](./CONVENTIONAL_COMMITS.md) for automati
 
 ```bash
 feat(extensions): add JWT configuration extension
+feat(seedwork): implement aggregate root with domain events
 fix(extensions): fix dependency injection issue
+fix(seedwork): resolve entity identity comparison
 docs: update API documentation
 ```
 
