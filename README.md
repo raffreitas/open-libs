@@ -1,10 +1,5 @@
 # OpenLibs
 
-[![Build Status](https://github.com/raffreitas/open-libs/workflows/Release%20and%20Publish/badge.svg)](https://github.com/raffreitas/open-libs/actions)
-[![NuGet](https://img.shields.io/nuget/v/OpenLibs.Extensions.svg)](https://www.nuget.org/packages/OpenLibs.Extensions/)
-[![codecov](https://codecov.io/gh/raffreitas/open-libs/branch/main/graph/badge.svg)](https://codecov.io/gh/raffreitas/open-libs)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 A collection of useful .NET libraries for modern development.
 
 ## 📦 Available Packages
