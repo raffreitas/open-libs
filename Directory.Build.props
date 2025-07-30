@@ -1,0 +1,52 @@
+<Project>
+  
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    
+    <!-- Build Configuration -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>NU1603</WarningsNotAsErrors>
+    <!-- Generate XML documentation for library projects only -->
+    <GenerateDocumentationFile Condition="'$(IsTestProject)' != 'true'">true</GenerateDocumentationFile>
+    
+    <!-- Package Information -->
+    <Company>OpenLibs</Company>
+    <Copyright>Copyright © Rafael Freitas $([System.DateTime]::Now.Year)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/raffreitas/open-libs</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/raffreitas/open-libs</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>dotnet;csharp;library;extensions</PackageTags>
+    
+    <!-- Semantic Versioning - Each project manages its own version -->
+    <!-- Version will be set by CI/CD or individual project files -->
+    <Version Condition="'$(Version)' == ''">1.0.0-dev</Version>
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(Version.Split('-')[0])</AssemblyVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">$(Version.Split('-')[0])</FileVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(Version)</InformationalVersion>
+    
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- SourceLink -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    
+    <!-- Analyzers -->
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Incluir README.md no pacote -->
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)README.md')">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

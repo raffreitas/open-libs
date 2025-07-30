@@ -1,0 +1,16 @@
+<Project>
+  
+  <PropertyGroup>
+    <!-- Desabilitar documentação XML para projetos de teste -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    
+    <!-- Configurações específicas para testes -->
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    
+    <!-- Warnings mais relaxados para testes -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn> <!-- Missing XML documentation -->
+  </PropertyGroup>
+
+</Project>

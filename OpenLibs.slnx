@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/OpenLibs.Extensions/OpenLibs.Extensions.csproj" Id="af842f52-0fba-4d45-b14a-d7d751a1144b" />
+  <Project Path="tests/OpenLibs.Extensions.Tests/OpenLibs.Extensions.Tests.csproj" Id="f8b91db0-ba2e-4fd1-9472-094e267501a7" />
+</Solution>

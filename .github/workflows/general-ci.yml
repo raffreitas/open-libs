@@ -1,0 +1,75 @@
+name: OpenLibs - General CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Directory.Build.props'
+      - '*.md'
+      - '.github/workflows/general-ci.yml'
+      - 'scripts/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Directory.Build.props'
+      - '*.md'
+      - 'scripts/**'
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build-all:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build all projects
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Test all projects
+      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: raffreitas/open-libs
+
+  validate-scripts:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'scripts/')
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Test PowerShell Scripts
+      shell: pwsh
+      run: |
+        Get-ChildItem -Path "scripts" -Filter "*.ps1" | ForEach-Object {
+          Write-Host "Validating $($_.Name)..."
+          $result = Get-Command $_.FullName -ErrorAction SilentlyContinue
+          if (-not $result) {
+            Write-Error "Script $($_.Name) has syntax errors"
+            exit 1
+          }
+          Write-Host "✅ $($_.Name) is valid"
+        }
+
+  markdown-lint:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, '.md')
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Lint Markdown files
+      uses: DavidAnson/markdownlint-cli2-action@v16
+      with:
+        globs: '**/*.md'
