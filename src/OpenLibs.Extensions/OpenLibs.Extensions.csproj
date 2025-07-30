@@ -4,12 +4,17 @@
         <!-- Project-specific settings -->
         <PackageId>OpenLibs.Extensions</PackageId>
         <Title>OpenLibs Extensions</Title>
-        <Description>Useful extensions for configuration and dependency injection in .NET applications.</Description>
+        <Description>Useful extensions for strongly-typed configuration and dependency injection in .NET applications with built-in validation support.</Description>
         <!-- Version is set by CI/CD via -p:Version parameter, defaults to 1.0.0-dev for local development -->
         <Version Condition="'$(Version)' == ''">1.0.0-dev</Version>
-        <PackageTags>$(PackageTags);extensions;configuration;dependency-injection</PackageTags>
+        <PackageTags>$(PackageTags);extensions;configuration;dependency-injection;validation;settings</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.6" />

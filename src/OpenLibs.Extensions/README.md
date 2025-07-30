@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/OpenLibs.Extensions.svg)](https://www.nuget.org/packages/OpenLibs.Extensions/)
 [![Downloads](https://img.shields.io/nuget/dt/OpenLibs.Extensions.svg)](https://www.nuget.org/packages/OpenLibs.Extensions/)
 
-Useful extensions for configuration and dependency injection in .NET applications.
+Useful extensions for strongly-typed configuration and dependency injection in .NET applications.
 
 ## 🚀 Installation
 
@@ -15,39 +15,57 @@ dotnet add package OpenLibs.Extensions
 
 ### SettingsConfigurationExtensions
 
-Extensions to simplify settings configuration in .NET applications.
+Extensions to simplify strongly-typed settings configuration in .NET applications with built-in validation support.
 
-#### Usage Example
+#### Quick Usage Examples
 
 ```csharp
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        // Configure settings automatically
-        services.AddSettings<MySettings>(Configuration);
+        // Option 1: Register settings for dependency injection
+        services.RegisterSettings<MySettings>(Configuration, "MyApp");
+        
+        // Option 2: Get validated settings instance immediately  
+        var settings = services.ConfigureRequiredSettings<MySettings>(Configuration, "MyApp");
+        
+        // Option 3: Use fluent builder for advanced configuration
+        services.ConfigureSettings<MySettings>(Configuration, "MyApp")
+            .WithDataAnnotationValidation()
+            .WithEagerValidation()
+            .Register();
     }
 }
 
+[DataContract]
 public class MySettings
 {
-    public string ApiUrl { get; set; }
+    [Required]
+    public string ApiUrl { get; set; } = string.Empty;
+    
+    [Range(1, 300)]
     public int TimeoutSeconds { get; set; }
 }
 ```
 
 ### SettingsConfigurationBuilder
 
-Builder pattern for advanced settings configuration.
+Fluent builder pattern for advanced settings configuration with validation options.
 
-#### Usage Example
+#### Builder Usage Example
 
 ```csharp
-services.AddSettings<MySettings>(builder => 
-    builder
-        .FromSection("MyApp")
-        .WithValidation()
-        .WithReload());
+// Basic fluent configuration
+services.ConfigureSettings<MySettings>(Configuration, "MyApp")
+    .WithDataAnnotationValidation()  // Enable Data Annotations validation
+    .WithEagerValidation()           // Validate at startup, not first access
+    .Register();                     // Register in DI container
+
+// Get settings instance directly
+var settings = services.ConfigureSettings<MySettings>(Configuration, "MyApp")
+    .WithDataAnnotationValidation()
+    .Build();
 ```
 
 ## 🔧 Configuration
@@ -63,33 +81,65 @@ services.AddSettings<MySettings>(builder =>
 }
 ```
 
+### Usage in Your Services
+
+```csharp
+// Inject as IOptions<T>
+public class MyService
+{
+    private readonly MySettings _settings;
+    
+    public MyService(IOptions<MySettings> settings)
+    {
+        _settings = settings.Value;
+    }
+}
+```
+
 ## 📖 API Reference
 
 ### SettingsConfigurationExtensions
 
-#### `AddSettings<T>(IServiceCollection, IConfiguration)`
+#### `RegisterSettings<T>(IServiceCollection, IConfiguration, string)`
 
-Registers a configuration object in the DI container.
+Registers a configuration object in the DI container with validation.
 
 **Parameters:**
 - `services`: Service collection
-- `configuration`: IConfiguration instance
+- `configuration`: IConfiguration instance  
+- `sectionName`: Configuration section name
 
 **Returns:** `IServiceCollection` for method chaining
 
-### SettingsConfigurationBuilder
+#### `ConfigureRequiredSettings<T>(IServiceCollection, IConfiguration, string)`
 
-#### `FromSection(string sectionName)`
+Gets a validated settings instance immediately.
 
-Defines the configuration file section to be used.
+**Returns:** Validated instance of type `T`
 
-#### `WithValidation()`
+#### `ConfigureSettings<T>(IServiceCollection, IConfiguration, string)`
 
-Enables automatic validation using Data Annotations.
+Creates a fluent configuration builder.
 
-#### `WithReload()`
+**Returns:** `SettingsConfigurationBuilder<T>` for fluent configuration
 
-Enables automatic reload when the configuration file changes.
+### SettingsConfigurationBuilder<T>
+
+#### `WithDataAnnotationValidation()`
+
+Enables automatic validation using Data Annotations attributes like `[Required]`, `[Range]`, etc.
+
+#### `WithEagerValidation()`
+
+Enables validation at application startup instead of first access.
+
+#### `Build()`
+
+Returns the configured settings instance.
+
+#### `Register()`
+
+Registers the settings in the DI container and returns the service collection.
 
 ## 🤝 Contributing
 
