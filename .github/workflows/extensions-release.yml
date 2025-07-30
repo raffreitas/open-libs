@@ -6,7 +6,7 @@ on:
     paths:
       - 'src/OpenLibs.Extensions/**'
       - 'tests/OpenLibs.Extensions.Tests/**'
-      - '.github/workflows/release.yml'
+      - '.github/workflows/extensions-release.yml'
   pull_request:
     branches: [ main ]
     paths:
