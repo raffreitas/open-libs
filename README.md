@@ -15,34 +15,6 @@ Each package follows modern .NET practices, targets .NET 9.0+, and includes comp
 | [OpenLibs.Extensions](https://www.nuget.org/packages/OpenLibs.Extensions/) | [![NuGet](https://img.shields.io/nuget/v/OpenLibs.Extensions.svg)](https://www.nuget.org/packages/OpenLibs.Extensions/) | Strongly-typed configuration and dependency injection extensions |
 | [OpenLibs.SeedWork](https://www.nuget.org/packages/OpenLibs.SeedWork/) | [![NuGet](https://img.shields.io/nuget/v/OpenLibs.SeedWork.svg)](https://www.nuget.org/packages/OpenLibs.SeedWork/) | Base implementations for Domain-Driven Design (DDD) |
 
-## 🚀 Installation
-
-### OpenLibs.Extensions
-
-```bash
-# Via Package Manager
-Install-Package OpenLibs.Extensions
-
-# Via .NET CLI
-dotnet add package OpenLibs.Extensions
-
-# Via PackageReference
-<PackageReference Include="OpenLibs.Extensions" Version="1.0.0" />
-```
-
-### OpenLibs.SeedWork
-
-```bash
-# Via Package Manager
-Install-Package OpenLibs.SeedWork
-
-# Via .NET CLI
-dotnet add package OpenLibs.SeedWork
-
-# Via PackageReference
-<PackageReference Include="OpenLibs.SeedWork" Version="1.0.0" />
-```
-
 ## 📖 Documentation
 
 Each package has its own comprehensive documentation:
