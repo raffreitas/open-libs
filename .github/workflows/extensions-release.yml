@@ -143,27 +143,26 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    
-    - name: Create Git Tag and Release
-      uses: mathieudutour/github-tag-action@v6.2
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        custom_tag: extensions-v${{ needs.calculate-version.outputs.version }}
-        tag_prefix: ""
-        create_annotated_tag: true
+
+    - name: Create Git Tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a "extensions-v${{ needs.calculate-version.outputs.version }}" -m "OpenLibs.Extensions v${{ needs.calculate-version.outputs.version }}"
+        git push origin "extensions-v${{ needs.calculate-version.outputs.version }}"
         
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: extensions-v${{ needs.calculate-version.outputs.version }}
-        release_name: OpenLibs.Extensions v${{ needs.calculate-version.outputs.version }}
+        name: OpenLibs.Extensions v${{ needs.calculate-version.outputs.version }}
         body: |
-          ## Changes in this Release
-          Check the commit history for detailed changes since the last release.
+          ## What's Changed
           
-          ## Package Published
-          - OpenLibs.Extensions v${{ needs.calculate-version.outputs.version }}
+          ### 📦 OpenLibs.Extensions v${{ needs.calculate-version.outputs.version }}
+          
+          Published to NuGet: https://www.nuget.org/packages/OpenLibs.Extensions/${{ needs.calculate-version.outputs.version }}
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/commits/main
         draft: false
         prerelease: false
