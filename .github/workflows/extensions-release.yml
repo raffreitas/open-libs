@@ -13,6 +13,10 @@ on:
       - 'src/OpenLibs.Extensions/**'
       - 'tests/OpenLibs.Extensions.Tests/**'
 
+permissions:
+  contents: write
+  packages: write
+
 env:
   DOTNET_VERSION: '9.0.x'
   PROJECT_NAME: 'OpenLibs.Extensions'
@@ -144,13 +148,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Create Git Tag
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git tag -a "extensions-v${{ needs.calculate-version.outputs.version }}" -m "OpenLibs.Extensions v${{ needs.calculate-version.outputs.version }}"
-        git push origin "extensions-v${{ needs.calculate-version.outputs.version }}"
-        
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
@@ -166,3 +163,4 @@ jobs:
           **Full Changelog**: https://github.com/${{ github.repository }}/commits/main
         draft: false
         prerelease: false
+        make_latest: true
