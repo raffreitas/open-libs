@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- Project-specific settings -->
+        <PackageId>OpenLibs.SeedWork</PackageId>
+        <Title>OpenLibs SeedWork</Title>
+        <Description>Base implementations and building blocks for Domain-Driven Design (DDD) applications including entities, value objects, domain events, and repositories.</Description>
+        <!-- Version is set by CI/CD via -p:Version parameter, defaults to 1.0.0-dev for local development -->
+        <Version Condition="'$(Version)' == ''">1.0.0-dev</Version>
+        <PackageTags>$(PackageTags);seedwork;ddd;domain-driven-design;entity;value-object;domain-events;repository</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="D:\repos\open\open-libs\README.md" />
+    </ItemGroup>
+
+</Project>

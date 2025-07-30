@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="src/OpenLibs.Extensions/OpenLibs.Extensions.csproj" Id="af842f52-0fba-4d45-b14a-d7d751a1144b" />
+  <Project Path="src/OpenLibs.SeedWork/OpenLibs.SeedWork.csproj" />
   <Project Path="tests/OpenLibs.Extensions.Tests/OpenLibs.Extensions.Tests.csproj" Id="f8b91db0-ba2e-4fd1-9472-094e267501a7" />
+  <Project Path="tests/OpenLibs.SeedWork.Tests/OpenLibs.SeedWork.Tests.csproj" Id="5e14521e-35d2-4811-9ac6-745e9d4e1a13" />
 </Solution>

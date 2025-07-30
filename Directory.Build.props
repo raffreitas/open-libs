@@ -11,7 +11,7 @@
     <WarningsAsErrors />
     <WarningsNotAsErrors>NU1603</WarningsNotAsErrors>
     <!-- Generate XML documentation for library projects only -->
-    <GenerateDocumentationFile Condition="'$(IsTestProject)' != 'true'">true</GenerateDocumentationFile>
+    <GenerateDocumentationFile Condition="'$(IsTestProject)' != 'true' AND '$(EnableDocumentation)' == 'true'">true</GenerateDocumentationFile>
     
     <!-- Package Information -->
     <Company>OpenLibs</Company>

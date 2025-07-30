@@ -1,0 +1,166 @@
+name: OpenLibs.SeedWork - Release and Publish
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/OpenLibs.SeedWork/**'
+      - 'tests/OpenLibs.SeedWork.Tests/**'
+      - '.github/workflows/extensions-release.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/OpenLibs.SeedWork/**'
+      - 'tests/OpenLibs.SeedWork.Tests/**'
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  PROJECT_NAME: 'OpenLibs.SeedWork'
+
+jobs:
+  calculate-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      should-release: ${{ steps.version.outputs.should-release }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Calculate Version
+      id: version
+      run: |
+        # Get the last tag for extensions
+        LAST_TAG=$(git tag -l "extensions-v*" | sort -V | tail -n1)
+        
+        if [ -z "$LAST_TAG" ]; then
+          # No previous tag, start from 1.0.0
+          LAST_VERSION="1.0.0"
+        else
+          # Extract version from tag (remove extensions-v prefix)
+          LAST_VERSION=${LAST_TAG#extensions-v}
+        fi
+        
+        echo "Last version: $LAST_VERSION"
+        
+        # Parse version components
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_VERSION"
+        
+        # Check commits since last tag for version bump
+        if [ -z "$LAST_TAG" ]; then
+          COMMITS=$(git log --oneline --grep="feat(" --grep="fix(" --grep="BREAKING CHANGE" --format="%s")
+        else
+          COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --grep="feat(" --grep="fix(" --grep="BREAKING CHANGE" --format="%s")
+        fi
+        
+        echo "Commits: $COMMITS"
+        
+        # Determine version bump
+        HAS_BREAKING=$(echo "$COMMITS" | grep -E "(BREAKING CHANGE|feat.*!:|fix.*!:)" || true)
+        HAS_FEAT=$(echo "$COMMITS" | grep "feat(" || true)
+        HAS_FIX=$(echo "$COMMITS" | grep "fix(" || true)
+        
+        if [ -n "$HAS_BREAKING" ]; then
+          # Major bump
+          NEW_VERSION="$((MAJOR + 1)).0.0"
+          SHOULD_RELEASE="true"
+        elif [ -n "$HAS_FEAT" ]; then
+          # Minor bump
+          NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+          SHOULD_RELEASE="true"
+        elif [ -n "$HAS_FIX" ]; then
+          # Patch bump
+          NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          SHOULD_RELEASE="true"
+        else
+          # No release needed
+          NEW_VERSION="$LAST_VERSION"
+          SHOULD_RELEASE="false"
+        fi
+        
+        echo "New version: $NEW_VERSION"
+        echo "Should release: $SHOULD_RELEASE"
+        
+        echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "should-release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: calculate-version
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build Solution
+      run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.calculate-version.outputs.version }}
+    
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: raffreitas/open-libs
+
+  pack-and-publish:
+    runs-on: ubuntu-latest
+    needs: [calculate-version, build-and-test]
+    if: github.ref == 'refs/heads/main' && needs.calculate-version.outputs.should-release == 'true'
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -p:Version=${{ needs.calculate-version.outputs.version }}
+    
+    - name: Pack
+      run: dotnet pack src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj --no-build --configuration Release -p:Version=${{ needs.calculate-version.outputs.version }} --output ./packages
+    
+    - name: Publish to NuGet
+      run: dotnet nuget push ./packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [calculate-version, pack-and-publish]
+    if: github.ref == 'refs/heads/main' && needs.calculate-version.outputs.should-release == 'true'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: extensions-v${{ needs.calculate-version.outputs.version }}
+        name: OpenLibs.SeedWork v${{ needs.calculate-version.outputs.version }}
+        body: |
+          ## What's Changed
+          
+          ### 📦 OpenLibs.SeedWork v${{ needs.calculate-version.outputs.version }}
+          
+          Published to NuGet: https://www.nuget.org/packages/OpenLibs.SeedWork/${{ needs.calculate-version.outputs.version }}
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/commits/main
+        draft: false
+        prerelease: false
+        make_latest: true
