@@ -10,6 +10,7 @@
         <PackageTags>$(PackageTags);extensions;configuration;dependency-injection;validation;settings</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <EnableDocumentation>true</EnableDocumentation>
     </PropertyGroup>
 
     <ItemGroup>
