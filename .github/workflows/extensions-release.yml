@@ -99,11 +99,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     
-    - name: Build
-      run: dotnet build --no-restore --configuration Release src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -p:Version=${{ needs.calculate-version.outputs.version }}
+    - name: Build Solution
+      run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.calculate-version.outputs.version }}
     
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" tests/${{ env.PROJECT_NAME }}.Tests/${{ env.PROJECT_NAME }}.Tests.csproj
+      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
     
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4
@@ -148,8 +148,8 @@ jobs:
       uses: mathieudutour/github-tag-action@v6.2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        custom_tag: ${{ needs.calculate-version.outputs.version }}
-        tag_prefix: "v"
+        custom_tag: extensions-v${{ needs.calculate-version.outputs.version }}
+        tag_prefix: ""
         create_annotated_tag: true
         
     - name: Create GitHub Release
