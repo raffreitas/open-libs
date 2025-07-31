@@ -1,3 +1,3 @@
 ﻿namespace OpenLibs.SeedWork;
 
-internal interface IValueObject;
+public interface IValueObject;
